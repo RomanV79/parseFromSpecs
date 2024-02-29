@@ -1,44 +1,89 @@
 package ru.vlasov.util;
 
 import ru.vlasov.entity.Element;
-import ru.vlasov.entity.ElementType;
 import ru.vlasov.entity.Repetition;
-import ru.vlasov.entity.Type;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class Convert {
-    public Element fromLinesToElement(String line) {
-        String[] lines = line.split("\t");
 
-        Element element = new Element();
+    public Element createObject(List<String> strings) {
+        Element rootElement = new Element();
+        int index = 0;
+        int level = 1;
+        rootElement.set$schema("http://json-schema.org/draft-04/schema#");
+        rootElement.setTitle(getTitleName(strings.get(index)));
+        rootElement.setType("object");
+        rootElement.setAdditionalProperties(false);
+        createElement(strings, rootElement, index, level);
 
-        if (lines[1].startsWith("mt_")) {
-            element.setLevel(lines[0].split("\\.").length);
-            element.setElementType(ElementType.HEADER);
-            element.setName(lines[1].substring(3).replace("_", ""));
-        } else {
-            element.setLevel(lines[0].split("\\.").length);
-            element.setName(lines[1]);
-            element.setType(getType(getClearType(lines[3])));
-            element.setRepetition(getRepetitionFromValue(lines[4]));
-            element.setDescription(String.join(" ", Arrays.copyOfRange(lines, 5, lines.length)));
-            if (element.getType().equals(Type.EMPTY)
-                    && (element.getRepetition().equals(Repetition.ZERO_TO_ONE)
-                                    || element.getRepetition().equals(Repetition.ONE))) {
-                element.setElementType(ElementType.OBJECT);
-            } else if(element.getType().equals(Type.EMPTY)
-                    && (element.getRepetition().equals(Repetition.ZERO_TO_UNBOUNDED)
-                    || element.getRepetition().equals(Repetition.ONE_TO_UNBOUNDED))) {
-                element.setElementType(ElementType.ARRAY);
-            } else {
-                element.setElementType(ElementType.FIELD);
+        return rootElement;
+    }
+
+    private void createElement(List<String> strings, Element rootElement, int index, int level) {
+        index++;
+        level++;
+        while (index < strings.size() && level == getStringLevel(strings.get(index))) {
+            if (isField(strings.get(index))) {
+                Element element = new Element();
+                element.setDescription(getDescription(strings.get(index)));
+
+                element.setType(getType(strings.get(index)));
+                checkAndFixNotSupportedType(element);
+
+                if (rootElement.getProperties() == null) {
+                    Map<String, Element> properties = new HashMap<>();
+                    rootElement.setProperties(properties);
+                }
+                rootElement.getProperties().put(getName(strings.get(index)), element);
+                index++;
             }
         }
-        System.out.println(element.toString());
-        return element;
     }
+
+    private void checkAndFixNotSupportedType(Element element) {
+        if (element.getType().equals("long")) {
+            element.setType("integer");
+            element.setFormat("int64");
+        }
+        if (element.getType().equals("decimal")) {
+            element.setType("number");
+            element.setFormat("decimal");
+        }
+        if (element.getType().equals("date")) {
+            element.setType("string");
+            element.setFormat("date");
+        }
+    }
+
+    private int getStringLevel(String line) {
+        return line.split("\t")[0].split("\\.").length;
+    }
+
+    private boolean isField(String line) {
+        String[] parts = line.split("\t");
+        return !parts[3].isEmpty();
+    }
+
+    private String getName(String line) {
+        return line.split("\t")[1];
+    }
+
+    private String getDescription(String line) {
+        return line.split("\t")[5];
+    }
+
+    private String getType(String line) {
+        String type = line.split("\t")[3];
+        if (type.contains("xsd:")) {
+            type = type.split(":")[1];
+        }
+        return type;
+    }
+
 
     private String getClearType(String line) {
         String type = "";
@@ -53,20 +98,20 @@ public class Convert {
         return type;
     }
 
-    private Type getType(String line) {
-        Type type = null;
-        if (!line.isEmpty()) {
-            try {
-                type = Type.valueOf(line.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("No enum constant " + Type.class + " with value " + line);
-            }
-        } else {
-            type = Type.EMPTY;
-        }
-
-        return type;
-    }
+//    private Type getType(String line) {
+//        Type type = null;
+//        if (!line.isEmpty()) {
+//            try {
+//                type = Type.valueOf(line.toUpperCase());
+//            } catch (IllegalArgumentException e) {
+//                throw new IllegalArgumentException("No enum constant " + Type.class + " with value " + line);
+//            }
+//        } else {
+//            type = Type.EMPTY;
+//        }
+//
+//        return type;
+//    }
 
     private Repetition getRepetitionFromValue(String line) {
         for (Repetition item : Repetition.values()) {
@@ -75,5 +120,11 @@ public class Convert {
             }
         }
         throw new IllegalArgumentException("No enum constant " + Repetition.class + " with value " + line);
+    }
+
+    private String getTitleName(String line) {
+        String rootName = line.split("\t")[1];
+        String[] parts = rootName.split("_");
+        return parts[1] + parts[2];
     }
 }

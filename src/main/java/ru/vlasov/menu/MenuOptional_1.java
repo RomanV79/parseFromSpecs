@@ -13,8 +13,7 @@ public class MenuOptional_1 implements MenuOptional {
     @Override
     public void handle() {
         System.out.println("Please enter model and type \"end\" after");
-        List<Element> elements = parseFromConsole.parse();
-        String gson = scheme.buildJson(elements);
-        System.out.println(gson);
+        Element element = parseFromConsole.parse();
+        System.out.println(scheme.generate(element));
     }
 }

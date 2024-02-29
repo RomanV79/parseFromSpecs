@@ -3,6 +3,7 @@ package ru.vlasov.util;
 import ru.vlasov.entity.Element;
 import ru.vlasov.entity.Repetition;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,8 @@ public class Convert {
     private void createElement(List<String> strings, Element rootElement, int index, int level) {
         index++;
         level++;
+        List<String> required = new ArrayList<>();
+
         while (index < strings.size() && level == getStringLevel(strings.get(index))) {
             if (isField(strings.get(index))) {
                 Element element = new Element();
@@ -39,7 +42,14 @@ public class Convert {
                     rootElement.setProperties(properties);
                 }
                 rootElement.getProperties().put(getName(strings.get(index)), element);
+
+                if(isRequired(strings.get(index))) {
+                    required.add(getName(strings.get(index)));
+                }
+                rootElement.setRequired(required);
+
                 index++;
+
             }
         }
     }
@@ -68,6 +78,13 @@ public class Convert {
         return !parts[3].isEmpty();
     }
 
+    private boolean isRequired(String line) {
+        String value = line.split("\t")[4];
+        return value.equals("1")
+                || value.equals("1..1")
+                || value.equals("1..неограниченно");
+    }
+
     private String getName(String line) {
         return line.split("\t")[1];
     }
@@ -83,35 +100,6 @@ public class Convert {
         }
         return type;
     }
-
-
-    private String getClearType(String line) {
-        String type = "";
-        if (!line.isEmpty()) {
-            String[] lines = line.split(":");
-            if (lines.length > 1) {
-                type = lines[1];
-            } else {
-                type = lines[0];
-            }
-        }
-        return type;
-    }
-
-//    private Type getType(String line) {
-//        Type type = null;
-//        if (!line.isEmpty()) {
-//            try {
-//                type = Type.valueOf(line.toUpperCase());
-//            } catch (IllegalArgumentException e) {
-//                throw new IllegalArgumentException("No enum constant " + Type.class + " with value " + line);
-//            }
-//        } else {
-//            type = Type.EMPTY;
-//        }
-//
-//        return type;
-//    }
 
     private Repetition getRepetitionFromValue(String line) {
         for (Repetition item : Repetition.values()) {

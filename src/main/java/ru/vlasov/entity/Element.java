@@ -12,6 +12,15 @@ public class Element {
     private String format;
     private Map<String, Element> properties;
     private Boolean additionalProperties;
+    private List<String> required;
+
+    public List<String> getRequired() {
+        return required;
+    }
+
+    public void setRequired(List<String> required) {
+        this.required = required;
+    }
 
     public String getTitle() {
         return title;
@@ -74,6 +83,14 @@ public class Element {
     }
 
     public void setAdditionalProperties(boolean additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public Boolean getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    public void setAdditionalProperties(Boolean additionalProperties) {
         this.additionalProperties = additionalProperties;
     }
 }

@@ -24,7 +24,7 @@ public class Convert {
         return rootElement;
     }
 
-    private void createElement(List<String> strings, Element rootElement, int index, int level) {
+    private void createElement(List<String> strings, Element parentElement, int index, int level) {
         index++;
         level++;
         List<String> required = new ArrayList<>();
@@ -37,20 +37,36 @@ public class Convert {
                 element.setType(getType(strings.get(index)));
                 checkAndFixNotSupportedType(element);
 
-                if (rootElement.getProperties() == null) {
+                if (parentElement.getProperties() == null) {
                     Map<String, Element> properties = new HashMap<>();
-                    rootElement.setProperties(properties);
+                    parentElement.setProperties(properties);
                 }
-                rootElement.getProperties().put(getName(strings.get(index)), element);
+                parentElement.getProperties().put(getName(strings.get(index)), element);
 
                 if(isRequired(strings.get(index))) {
                     required.add(getName(strings.get(index)));
                 }
-                rootElement.setRequired(required);
+                parentElement.setRequired(required);
 
                 index++;
-
             }
+
+            if (isObject(strings.get(index))) {
+                Element element = new Element();
+                element.setDescription(getDescription(strings.get(index)));
+                element.setType("object");
+                element.setAdditionalProperties(false);
+
+                if (parentElement.getProperties() == null) {
+                    Map<String, Element> properties = new HashMap<>();
+                    parentElement.setProperties(properties);
+                }
+                parentElement.getProperties().put(getName(strings.get(index)), element);
+
+                createElement(strings, element, index, level);
+            }
+
+
         }
     }
 
@@ -76,6 +92,14 @@ public class Convert {
     private boolean isField(String line) {
         String[] parts = line.split("\t");
         return !parts[3].isEmpty();
+    }
+
+    private boolean isObject(String line) {
+        String[] parts = line.split("\t");
+        return parts[3].isEmpty()
+                && (parts[4].equals("0..1")
+                        || parts[4].equals("1..1")
+                        || parts[4].equals("1"));
     }
 
     private boolean isRequired(String line) {

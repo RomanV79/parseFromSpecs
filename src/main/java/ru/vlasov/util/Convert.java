@@ -1,7 +1,6 @@
 package ru.vlasov.util;
 
 import ru.vlasov.entity.Element;
-import ru.vlasov.entity.Repetition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import java.util.Map;
 
 
 public class Convert {
+
 
     public Element createObject(List<String> strings) {
         Element rootElement = new Element();
@@ -24,7 +24,7 @@ public class Convert {
         return rootElement;
     }
 
-    private void createElement(List<String> strings, Element parentElement, int index, int level) {
+    private int createElement(List<String> strings, Element parentElement, int index, int level) {
         index++;
         level++;
         List<String> required = new ArrayList<>();
@@ -37,18 +37,13 @@ public class Convert {
                 element.setType(getType(strings.get(index)));
                 checkAndFixNotSupportedType(element);
 
-                if (parentElement.getProperties() == null) {
-                    Map<String, Element> properties = new HashMap<>();
-                    parentElement.setProperties(properties);
-                }
-                parentElement.getProperties().put(getName(strings.get(index)), element);
-
-                if(isRequired(strings.get(index))) {
-                    required.add(getName(strings.get(index)));
-                }
-                parentElement.setRequired(required);
+                addToPropertiesForParentElement(strings, parentElement, index, element);
+                addToRequiredForParentElement(strings, parentElement, index, required);
 
                 index++;
+                if (index == strings.size() || getStringLevel(strings.get(index)) == level - 1) {
+                    break;
+                }
             }
 
             if (isObject(strings.get(index))) {
@@ -57,17 +52,28 @@ public class Convert {
                 element.setType("object");
                 element.setAdditionalProperties(false);
 
-                if (parentElement.getProperties() == null) {
-                    Map<String, Element> properties = new HashMap<>();
-                    parentElement.setProperties(properties);
-                }
-                parentElement.getProperties().put(getName(strings.get(index)), element);
+                addToPropertiesForParentElement(strings, parentElement, index, element);
+                addToRequiredForParentElement(strings, parentElement, index, required);
 
-                createElement(strings, element, index, level);
+                index = createElement(strings, element, index, level);
             }
-
-
         }
+        return index;
+    }
+
+    private void addToRequiredForParentElement(List<String> strings, Element parentElement, int index, List<String> required) {
+        if (isRequired(strings.get(index))) {
+            required.add(getName(strings.get(index)));
+        }
+        parentElement.setRequired(required);
+    }
+
+    private void addToPropertiesForParentElement(List<String> strings, Element parentElement, int index, Element element) {
+        if (parentElement.getProperties() == null) {
+            Map<String, Element> properties = new HashMap<>();
+            parentElement.setProperties(properties);
+        }
+        parentElement.getProperties().put(getName(strings.get(index)), element);
     }
 
     private void checkAndFixNotSupportedType(Element element) {
@@ -98,8 +104,8 @@ public class Convert {
         String[] parts = line.split("\t");
         return parts[3].isEmpty()
                 && (parts[4].equals("0..1")
-                        || parts[4].equals("1..1")
-                        || parts[4].equals("1"));
+                || parts[4].equals("1..1")
+                || parts[4].equals("1"));
     }
 
     private boolean isRequired(String line) {
@@ -123,15 +129,6 @@ public class Convert {
             type = type.split(":")[1];
         }
         return type;
-    }
-
-    private Repetition getRepetitionFromValue(String line) {
-        for (Repetition item : Repetition.values()) {
-            if (item.getValue().equals(line.toLowerCase())) {
-                return item;
-            }
-        }
-        throw new IllegalArgumentException("No enum constant " + Repetition.class + " with value " + line);
     }
 
     private String getTitleName(String line) {

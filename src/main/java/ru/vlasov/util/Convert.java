@@ -56,6 +56,26 @@ public class Convert {
                 addToRequiredForParentElement(strings, parentElement, index, required);
 
                 index = createElement(strings, element, index, level);
+                if (index == strings.size()) {
+                    break;
+                }
+            }
+
+            if(isArray(strings.get(index))) {
+                Element element = new Element();
+                element.setDescription(getDescription(strings.get(index)));
+                element.setType("array");
+
+                addToPropertiesForParentElement(strings, parentElement, index, element);
+                addToRequiredForParentElement(strings, parentElement, index, required);
+
+                Element childElement = new Element();
+                childElement.setType("object");
+                childElement.setAdditionalProperties(false);
+
+                element.setItems(childElement);
+
+                index = createElement(strings, childElement, index, level);
             }
         }
         return index;
@@ -106,6 +126,16 @@ public class Convert {
                 && (parts[4].equals("0..1")
                 || parts[4].equals("1..1")
                 || parts[4].equals("1"));
+    }
+
+    private boolean isArray(String line) {
+        String[] parts = line.split("\t");
+        return parts[3].isEmpty()
+                && (parts[4].equals("0..неограниченно")
+                || parts[4].equals("1..неограниченно")
+                || parts[4].equals("0..unbounded")
+                || parts[4].equals("1..unbounded")
+        );
     }
 
     private boolean isRequired(String line) {

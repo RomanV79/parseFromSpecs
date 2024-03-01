@@ -10,6 +10,7 @@ public class Element {
     private String description;
     private String type;
     private String format;
+    private Element items;
     private Map<String, Element> properties;
     private Boolean additionalProperties;
     private List<String> required;
@@ -92,5 +93,13 @@ public class Element {
 
     public void setAdditionalProperties(Boolean additionalProperties) {
         this.additionalProperties = additionalProperties;
+    }
+
+    public Element getItems() {
+        return items;
+    }
+
+    public void setItems(Element items) {
+        this.items = items;
     }
 }

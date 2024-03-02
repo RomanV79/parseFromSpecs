@@ -22,86 +22,86 @@
 Эта таблица будет представлена в виде Json-схемы:
 ```json
 {
-"$schema": "http://json-schema.org/draft-04/schema#",
-"title": "ClassNameRQ",
-"type": "object",
-"properties": {
-"InnerObject_2": {
-"description": "Description_4",
-"type": "object",
-"properties": {
-"field_21": {
-"description": "Description_5",
-"type": "string"
-},
-"field_23_array": {
-"description": "Description_7",
-"type": "array",
-"items": {
-"type": "object",
-"properties": {
-"field_232": {
-"description": "Description_9",
-"type": "integer"
-},
-"field_231": {
-"description": "Description_8",
-"type": "string"
-}
-},
-"additionalProperties": false,
-"required": [
-"field_231",
-"field_232"
-]
-}
-},
-"field_22": {
-"description": "Description_6",
-"type": "string"
-},
-"field_24": {
-"description": "Description_10",
-"type": "string"
-},
-"field_25": {
-"description": "Description_11",
-"type": "string"
-},
-"field_26": {
-"description": "Description_12",
-"type": "integer"
-}
-},
-"additionalProperties": false,
-"required": [
-"field_21",
-"field_22",
-"field_26"
-]
-},
-"InnerObject_1": {
-"description": "Description_1",
-"type": "object",
-"properties": {
-"field_11": {
-"description": "Description_2",
-"type": "string"
-},
-"field_12": {
-"description": "Description_3",
-"type": "string"
-}
-},
-"additionalProperties": false,
-"required": [
-"field_11",
-"field_12"
-]
-}
-},
-"additionalProperties": false,
-"required": []
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ClassNameRQ",
+  "type": "object",
+  "properties": {
+    "InnerObject_2": {
+      "description": "Description_4",
+      "type": "object",
+      "properties": {
+        "field_21": {
+          "description": "Description_5",
+          "type": "string"
+        },
+        "field_23_array": {
+          "description": "Description_7",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field_232": {
+                "description": "Description_9",
+                "type": "integer"
+              },
+              "field_231": {
+                "description": "Description_8",
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "field_231",
+              "field_232"
+            ]
+          }
+        },
+        "field_22": {
+          "description": "Description_6",
+          "type": "string"
+        },
+        "field_24": {
+          "description": "Description_10",
+          "type": "string"
+        },
+        "field_25": {
+          "description": "Description_11",
+          "type": "string"
+        },
+        "field_26": {
+          "description": "Description_12",
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "field_21",
+        "field_22",
+        "field_26"
+      ]
+    },
+    "InnerObject_1": {
+      "description": "Description_1",
+      "type": "object",
+      "properties": {
+        "field_11": {
+          "description": "Description_2",
+          "type": "string"
+        },
+        "field_12": {
+          "description": "Description_3",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "field_11",
+        "field_12"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": []
 }
 ```
 

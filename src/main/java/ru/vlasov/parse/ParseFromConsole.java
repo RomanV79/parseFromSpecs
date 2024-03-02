@@ -13,8 +13,7 @@ public class ParseFromConsole implements Parsing {
     public Element parse() {
         List<String> strings = Util.readLines();
         System.out.println("read " + strings.size() + " lines");
-        Element element = convert.createObject(strings);
 
-        return element;
+        return convert.createObjectFromLines(strings);
     }
 }

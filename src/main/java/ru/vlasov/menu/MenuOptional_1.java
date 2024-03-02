@@ -4,8 +4,6 @@ import ru.vlasov.dto.Scheme;
 import ru.vlasov.entity.Element;
 import ru.vlasov.parse.ParseFromConsole;
 
-import java.util.List;
-
 public class MenuOptional_1 implements MenuOptional {
     private final ParseFromConsole parseFromConsole = new ParseFromConsole();
     private final Scheme scheme = new Scheme();

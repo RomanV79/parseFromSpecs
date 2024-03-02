@@ -22,7 +22,7 @@ public class Action {
 
         while (!isExit) {
             table.render();
-            keyHandler.handleMenu(this);
+            keyHandler.handleMenu();
         }
 
         Util.scanner.close();

@@ -11,7 +11,7 @@ import java.util.Map;
 public class Convert {
 
 
-    public Element createObject(List<String> strings) {
+    public Element createObjectFromLines(List<String> strings) {
         Element rootElement = new Element();
         int index = 0;
         int level = 1;

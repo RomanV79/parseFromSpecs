@@ -1,6 +1,5 @@
 package ru.vlasov.menu;
 
-import ru.vlasov.action.Action;
 import ru.vlasov.util.Util;
 
 import java.util.HashMap;
@@ -8,7 +7,7 @@ import java.util.Map;
 
 
 public class KeyHandler {
-    private Action action;
+
     private final Map<String, MenuOptional> menuHandlers = new HashMap<>();
 
     public KeyHandler() {
@@ -17,7 +16,7 @@ public class KeyHandler {
         menuHandlers.put("0", new MenuOptionalExit());
     }
 
-    public void handleMenu(Action action) {
+    public void handleMenu() {
         String command = Util.readLine();
         if (menuHandlers.containsKey(command)) {
             menuHandlers.get(command).handle();

@@ -2,10 +2,7 @@ package ru.vlasov.util;
 
 import ru.vlasov.entity.Element;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Convert {
@@ -61,7 +58,7 @@ public class Convert {
                 }
             }
 
-            if(isArray(strings.get(index))) {
+            if (isArray(strings.get(index))) {
                 Element element = new Element();
                 element.setDescription(getDescription(strings.get(index)));
                 element.setType("array");
@@ -162,8 +159,14 @@ public class Convert {
     }
 
     private String getTitleName(String line) {
-        String rootName = line.split("\t")[1];
-        String[] parts = rootName.split("_");
-        return parts[1] + parts[2];
+        String nameCell = line.split("\t")[1];
+        String[] parts = nameCell.split("_");
+        String title;
+        if (parts.length == 3 && parts[0].equals("mt") && (parts[2].equals("RQ") || parts[2].equals("RS"))) {
+            title = parts[1] + parts[2];
+        } else {
+            title = nameCell;
+        }
+        return title;
     }
 }
